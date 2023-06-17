@@ -18,9 +18,6 @@ const routes: Routes = [
                 pathMatch: 'full'
             }
         ]
-    },
-    {
-        path: '**', component: AppComponent
     }
 ];
 
