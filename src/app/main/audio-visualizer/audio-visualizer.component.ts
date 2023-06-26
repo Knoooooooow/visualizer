@@ -12,12 +12,7 @@ import * as dat from "dat.gui";
 export class AudioVisualizerComponent implements OnInit {
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-    );
+    camera = new THREE.OrthographicCamera(window.innerWidth / -8, window.innerWidth / 8, window.innerHeight / 8, window.innerHeight / -8, 1, 1000);
     renderer = new THREE.WebGLRenderer();
     controls = new OrbitControls(this.camera, this.renderer.domElement)
     @ViewChild('audioVisualizer', { static: true }) audioVisualizer: ElementRef | undefined;
@@ -26,9 +21,7 @@ export class AudioVisualizerComponent implements OnInit {
     ngOnInit() {
         this.camera.position.set(0, 0, 300);
         this.scene.add(this.camera);
-
         window.addEventListener("resize", () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.renderer.setPixelRatio(window.devicePixelRatio)
