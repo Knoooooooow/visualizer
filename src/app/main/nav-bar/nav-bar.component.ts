@@ -41,11 +41,8 @@ export class NavBarComponent implements OnInit,AfterViewInit {
 
     fileChange(event: any) {
         const files = event.target.files;
-        if (files) {
-            this.audio.nativeElement.src = URL.createObjectURL(files[0]);
-            console.log(URL.createObjectURL(files[0]));
-            this.audio.nativeElement.load();
-            this.audio.nativeElement.play();
+        if (files && files.length) {
+            this.audioService.initActiveAudio(files,this.audio);
         }
     }
 }
