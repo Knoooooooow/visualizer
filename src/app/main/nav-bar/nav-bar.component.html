@@ -1,13 +1,26 @@
-<mat-toolbar color="primary">
-    <button mat-icon-button class="menu-icon">
-        <mat-icon>menu</mat-icon>
-    </button>
-    <span>My App</span>
-    <span class="spacer"></span>
-    <button mat-icon-button class="favorite-icon">
-        <mat-icon>favorite</mat-icon>
-    </button>
-    <button mat-icon-button class="share-icon">
-        <mat-icon>share</mat-icon>
-    </button>
-</mat-toolbar>
+<div #navBar class="nav-bar">
+    <mat-toolbar color="primary">
+        <button mat-icon-button class="menu-icon">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <span>My App</span>
+        <span class="spacer"></span>
+        <button mat-icon-button class="favorite-icon">
+            <mat-icon>favorite</mat-icon>
+        </button>
+        <div class="music">
+            <div class="upload">
+                <button mat-flat-button color="primary" (click)="play()">播放(shygui)</button>
+            </div>
+            <div class="upload">
+                <button mat-flat-button color="primary" (click)="openInput()">上传</button>
+                <input #audioUpload id="fileInput" hidden type="file" (change)="fileChange($event)" name="file"
+                    accept="audio/*">
+            </div>
+            <audio class="audio" #audio id="audio" controls></audio>
+        </div>
+        <button mat-icon-button class="share-icon">
+            <mat-icon>share</mat-icon>
+        </button>
+    </mat-toolbar>
+</div>
