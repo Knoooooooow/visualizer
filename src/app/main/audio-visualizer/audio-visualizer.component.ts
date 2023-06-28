@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { SubjectService } from '../service/subject.service';
 import gsap from "gsap";
 import * as dat from "dat.gui";
+import { RhythmService } from '../service/rhythm.service';
 
 @Component({
     selector: 'app-audio-visualizer',
@@ -23,7 +24,10 @@ export class AudioVisualizerComponent implements OnInit, AfterViewInit, OnDestro
 
     navBarHeight: number;
 
-    constructor(public cubeFactoryService: CubeFactoryService, public subjectService: SubjectService) { }
+    constructor(public cubeFactoryService: CubeFactoryService,
+        public subjectService: SubjectService,
+        public rhythmService:RhythmService
+        ) { }
 
     ngOnInit() {
         this.subjectService.navBarLoaded.subscribe((params: any) => {
@@ -45,6 +49,7 @@ export class AudioVisualizerComponent implements OnInit, AfterViewInit, OnDestro
         this.renderer = new THREE.WebGLRenderer();
         this.camera = new THREE.OrthographicCamera(width / -8, width / 8, height / 8, height / -8, 1, 800);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         
         this.camera.position.set(0, 0, 300);
         this.scene.add(this.camera);
         window.addEventListener("resize", () => {
@@ -64,7 +69,8 @@ export class AudioVisualizerComponent implements OnInit, AfterViewInit, OnDestro
         })
 
         this.audioVisualizer.nativeElement.appendChild(this.renderer.domElement);
-        this.render();
+        
+        this.rhythmService.renderByFrame(this.controls,this.renderer,this.scene,this.camera)
 
         const axesHelper = new THREE.AxesHelper(200);
         this.scene.add(axesHelper);
