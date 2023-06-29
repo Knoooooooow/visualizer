@@ -35,6 +35,10 @@ export class NavBarComponent implements OnInit,AfterViewInit {
         this.subjectService.navBarLoaded.next({ type: 'loaded', payload: this.navBar.nativeElement.offsetHeight });
     }
 
+    toggleController() {
+        this.subjectService.toggleController.next(null);
+    }
+
     openInput() {
         this.audioUpload.nativeElement.click();
     }

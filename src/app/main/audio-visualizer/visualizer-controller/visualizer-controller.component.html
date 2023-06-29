@@ -1,0 +1,10 @@
+<div class="visualizer-controller">
+    <div class="form-container">
+        <form [formGroup]="form" (submit)="submit()">
+            <mat-slider class="slider" [discrete]="true" [step]="1" [min]="20" [max]="200">
+                <input matSliderThumb formControlName="unit">
+            </mat-slider>
+            <mat-divider></mat-divider>
+        </form>
+    </div>
+</div>

@@ -24,17 +24,22 @@ export class AudioVisualizerComponent implements OnInit, AfterViewInit, OnDestro
 
     navBarHeight: number;
 
+    isOpenedController:boolean;
+
     constructor(public cubeFactoryService: CubeFactoryService,
         public subjectService: SubjectService,
         public rhythmService:RhythmService
         ) { }
 
     ngOnInit() {
+        this.isOpenedController = true;
         this.subjectService.navBarLoaded.subscribe((params: any) => {
             this.navBarHeight = params.payload;
             this.initCanvasContainer();
         })
-
+        this.subjectService.toggleController.subscribe(_ => {
+            this.isOpenedController = !this.isOpenedController;
+        })
     }
 
     ngAfterViewInit() {
@@ -59,6 +64,7 @@ export class AudioVisualizerComponent implements OnInit, AfterViewInit, OnDestro
         });
 
         this.renderer.setSize(width, height);
+        this.audioVisualizer.nativeElement.appendChild(this.renderer.domElement);
         this.initCubes();
     }
 
@@ -68,18 +74,11 @@ export class AudioVisualizerComponent implements OnInit, AfterViewInit, OnDestro
             this.scene.add(cube);
         })
 
-        this.audioVisualizer.nativeElement.appendChild(this.renderer.domElement);
         
         this.rhythmService.renderByFrame(this.controls,this.renderer,this.scene,this.camera)
 
         const axesHelper = new THREE.AxesHelper(200);
         this.scene.add(axesHelper);
-    }
-
-    render() {
-        this.controls.update();
-        this.renderer.render(this.scene, this.camera);
-        requestAnimationFrame(this.render.bind(this));
     }
 
     ngOnDestroy() {

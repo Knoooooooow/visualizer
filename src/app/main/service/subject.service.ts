@@ -9,5 +9,6 @@ export class SubjectService {
     constructor() { }
 
     navBarLoaded = new Subject();
+    toggleController = new Subject();
     
 }

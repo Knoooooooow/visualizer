@@ -14,6 +14,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+
 const MATERIAL_MODULES = [
     MatFormFieldModule,
     MatSliderModule,
@@ -25,7 +28,9 @@ const MATERIAL_MODULES = [
     MatTreeModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDividerModule,
+    MatListModule
 ];
 
 @NgModule({
