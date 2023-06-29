@@ -17,7 +17,12 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
 
     constructor(private formBuilder: FormBuilder,public rhythmService:RhythmService) {
         this.form = this.formBuilder.group({
-            unit: [100]
+            unit: [100],
+            width: [5],
+            spacing: [1],
+            x:[10],
+            y:[10],
+            z:[10]
         });
         this.form.controls['unit'].valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
             this.rhythmService.changeCubes(value);

@@ -1,7 +1,13 @@
 .visualizer-controller{
-    width: 300px;
+    width: 350px;
     .form-container{
         padding: 25px;
+        .form-group{
+            margin-bottom: 15px;
+        }
+        .flex{
+            display: flex;
+        }
         .slider{
             width: 100%;
         }
