@@ -38,7 +38,6 @@ export class RhythmService {
     initScene(navBarHeight: number) {
         const width = window.innerWidth;
         const height = window.innerHeight - navBarHeight;
-        console.log(width, height);
 
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer();
@@ -57,10 +56,25 @@ export class RhythmService {
         return this.renderer.domElement;
     }
 
-    initCubes() {
+    disposeCubes() {
+        this._cubes.forEach(cube => {
+            this.scene.remove(cube);
+            if (cube.material instanceof THREE.Material) {
+                cube.material.dispose()
+            } else if (Array.isArray(cube.material)) {
+                for (const material of cube.material) {
+                    material.dispose()
+                }
+            }
+            cube.geometry.dispose();
+            (<any>cube) = undefined;
+        })
+        this._cubes = [];
+    }
 
-        const cubes = this.cubeFactoryService.generateBoxGeometry({ width: 1, height: 5, depth: 1 }, { color: 0x00ff00 }, { spacing: 1, unit: 50, startPosition: { x: 10, y: 10, z: 10 } });
-        cubes.forEach(cube => {
+    initCubes() {
+        this._cubes = this.cubeFactoryService.generateBoxGeometry({ width: 1, height: 5, depth: 1 }, { color: 0x00ff00 }, { spacing: 1, unit: 50, startPosition: { x: 10, y: 10, z: 10 } });
+        this._cubes.forEach(cube => {
             this.scene.add(cube);
         })
 
