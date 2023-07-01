@@ -1,9 +1,9 @@
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { SubjectService } from './../../service/subject.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RhythmService } from '../../service/rhythm.service';
+import { CubesPosition } from 'src/app/model/cubesPosition.interface';
 
 @Component({
     selector: 'app-visualizer-controller',
@@ -15,17 +15,17 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
     form: FormGroup;
     onDestroy$: Subject<boolean> = new Subject<boolean>();
 
-    constructor(private formBuilder: FormBuilder,public rhythmService:RhythmService) {
+    constructor(private formBuilder: FormBuilder, public rhythmService: RhythmService) {
         this.form = this.formBuilder.group({
             unit: [100],
-            width: [5],
+            width: [3],
             spacing: [1],
-            x:[10],
-            y:[10],
-            z:[10]
+            x: [10],
+            y: [10],
+            z: [10]
         });
-        this.form.controls['unit'].valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
-            this.rhythmService.changeCubes(value);
+        this.form.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(params => {
+            this.rhythmService.changeCubes(params);
         })
     }
 
@@ -34,6 +34,8 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        const formValue:CubesPosition = this.form.value;
+        this.rhythmService.initCubesPositionValue(formValue);
     }
     ngOnDestroy() {
         this.onDestroy$.next(true);

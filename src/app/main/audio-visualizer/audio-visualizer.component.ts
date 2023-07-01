@@ -38,7 +38,7 @@ export class AudioVisualizerComponent implements OnInit, OnDestroy {
 
     initCanvasContainer() {
         const domElement = this.rhythmService.initScene(this.navBarHeight);
-        this.rhythmService.initCubes();
+        this.rhythmService.generateCubesAndInsertScene();
 
         this.audioVisualizer.nativeElement.appendChild(domElement);
     }

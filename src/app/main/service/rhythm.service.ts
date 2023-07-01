@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CubeFactoryService } from './cube-factory.service';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { CubesPosition } from 'src/app/model/cubesPosition.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +14,8 @@ export class RhythmService {
 
 
     private _cubes: THREE.Mesh[];
+
+    private _cubesPosition: CubesPosition;
 
     scene: THREE.Scene;
     camera: THREE.OrthographicCamera;
@@ -31,8 +34,14 @@ export class RhythmService {
         this._analyser = value;
     }
 
-    changeCubes(value: number) {
-        console.log(value)
+    initCubesPositionValue(params: CubesPosition) {
+        this._cubesPosition = params;
+    }
+
+    changeCubes(params: CubesPosition) {
+        this.initCubesPositionValue(params)
+        this.disposeCubes();
+        this.generateCubesAndInsertScene();
     }
 
     initScene(navBarHeight: number) {
@@ -41,10 +50,10 @@ export class RhythmService {
 
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer();
-        this.camera = new THREE.OrthographicCamera(width / -8, width / 8, height / 8, height / -8, 1, 800);
+        this.camera = new THREE.OrthographicCamera(width / -8, width / 8, height / 8, height / -8, 1, 1000);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
-        this.camera.position.set(0, 0, 300);
+        this.camera.position.set(0, 0, 800);
         this.scene.add(this.camera);
         window.addEventListener("resize", () => {
             this.camera.updateProjectionMatrix();
@@ -72,11 +81,10 @@ export class RhythmService {
         this._cubes = [];
     }
 
-    initCubes() {
-        this._cubes = this.cubeFactoryService.generateBoxGeometry({ width: 1, height: 5, depth: 1 }, { color: 0x00ff00 }, { spacing: 1, unit: 50, startPosition: { x: 10, y: 10, z: 10 } });
-        this._cubes.forEach(cube => {
-            this.scene.add(cube);
-        })
+    generateCubesAndInsertScene() {
+        const { width, unit, spacing, x, y, z } = this._cubesPosition;
+        this._cubes = this.cubeFactoryService.generateBoxGeometry({ width, height: 5, depth: 1 }, { color: 0x00ff00 }, { spacing, unit, startPosition: { x, y, z } });
+        this.scene.add(...this._cubes);
 
         this.renderByFrame(this.controls, this.renderer, this.scene, this.camera)
 
