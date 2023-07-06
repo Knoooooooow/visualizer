@@ -20,6 +20,7 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
             unit: [100],
             width: [3],
             spacing: [1],
+            level: [1],
             x: [10],
             y: [10],
             z: [10]
