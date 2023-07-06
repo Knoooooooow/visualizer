@@ -24,7 +24,12 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
             y: [10],
             z: [10]
         });
-        this.form.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(params => {
+        this.form.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe((params: CubesPosition) => {
+            for (const key in params) {
+                if (typeof params[key] === 'string') {
+                    params[key] = Number(params[key]);
+                }
+            }
             this.rhythmService.changeCubes(params);
         })
     }
@@ -34,7 +39,7 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        const formValue:CubesPosition = this.form.value;
+        const formValue: CubesPosition = this.form.value;
         this.rhythmService.initCubesPositionValue(formValue);
     }
     ngOnDestroy() {

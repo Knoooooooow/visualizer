@@ -4,33 +4,33 @@
             <div class="form-group flex">
                 <mat-form-field>
                     <mat-label>坐标X</mat-label>
-                    <input matInput formControlName="x">
+                    <input type="number" matInput formControlName="x">
                 </mat-form-field>
                 <mat-form-field>
                     <mat-label>坐标Y</mat-label>
-                    <input matInput formControlName="y">
+                    <input type="number" matInput formControlName="y">
                 </mat-form-field>
                 <mat-form-field>
                     <mat-label>坐标Z</mat-label>
-                    <input matInput formControlName="z">
+                    <input type="number" matInput formControlName="z">
                 </mat-form-field>
             </div>
             <div class="form-group">
                 <mat-label>宽度</mat-label>
                 <mat-slider class="slider" [discrete]="true" [step]="1" [min]="1" [max]="20">
-                    <input placeholder="" matSliderThumb formControlName="width">
+                    <input type="number" placeholder="" matSliderThumb formControlName="width">
                 </mat-slider>
             </div>
             <div class="form-group">
                 <mat-label>数量</mat-label>
                 <mat-slider class="slider" [discrete]="true" [step]="1" [min]="20" [max]="200">
-                    <input placeholder="" matSliderThumb formControlName="unit">
+                    <input type="number" placeholder="" matSliderThumb formControlName="unit">
                 </mat-slider>
             </div>
             <div class="form-group">
                 <mat-label>间距</mat-label>
                 <mat-slider class="slider" [discrete]="true" [step]="1" [min]="0" [max]="20">
-                    <input placeholder="" matSliderThumb formControlName="spacing">
+                    <input type="number" placeholder="" matSliderThumb formControlName="spacing">
                 </mat-slider>
             </div>
             <mat-divider></mat-divider>

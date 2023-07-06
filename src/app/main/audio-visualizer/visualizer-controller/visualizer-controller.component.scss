@@ -1,14 +1,18 @@
-.visualizer-controller{
+.visualizer-controller {
     width: 350px;
-    .form-container{
+    .form-container {
         padding: 25px;
-        .form-group{
+        .form-group {
             margin-bottom: 15px;
+            input::-webkit-inner-spin-button,
+            ::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+            }
         }
-        .flex{
+        .flex {
             display: flex;
         }
-        .slider{
+        .slider {
             width: 100%;
         }
     }

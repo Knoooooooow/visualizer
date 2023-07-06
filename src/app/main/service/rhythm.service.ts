@@ -86,7 +86,7 @@ export class RhythmService {
         this._cubes = this.cubeFactoryService.generateBoxGeometry({ width, height: 5, depth: 1 }, { color: 0x00ff00 }, { spacing, unit, startPosition: { x, y, z } });
         this.scene.add(...this._cubes);
 
-        this.renderByFrame(this.controls, this.renderer, this.scene, this.camera)
+        this.renderByFrame(this.controls, this.renderer, this.scene, this.camera);
 
         const axesHelper = new THREE.AxesHelper(200);
         this.scene.add(axesHelper);
