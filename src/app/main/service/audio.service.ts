@@ -35,7 +35,7 @@ export class AudioService {
         let source = context.createMediaElementSource(this.audio);
         source.connect(analyser);
         analyser.connect(context.destination);
-        analyser.fftSize = 2048;
+        analyser.fftSize = this.rhythmService.fftSize;
         let bufferLength = analyser.frequencyBinCount;
         let dataArray = new Uint8Array(bufferLength);
         this.rhythmService.initAudioBufferArray(dataArray);

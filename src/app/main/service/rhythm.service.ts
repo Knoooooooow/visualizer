@@ -9,13 +9,19 @@ import { CubesPosition } from 'src/app/model/cubesPosition.interface';
 })
 export class RhythmService {
 
+
+    public fftSize = 2048;
+
     private _audioBufferArray: Uint8Array;
+    private _audioBufferListArray: Uint8Array[];
     private _analyser: AnalyserNode;
+
 
 
     private _cubes: THREE.Mesh[];
 
     private _cubesPosition: CubesPosition;
+    private _visualizerValue: any = {};
 
     scene: THREE.Scene;
     camera: THREE.OrthographicCamera;
@@ -23,7 +29,13 @@ export class RhythmService {
     controls: OrbitControls;
 
 
-    constructor(public cubeFactoryService: CubeFactoryService) { }
+    constructor(public cubeFactoryService: CubeFactoryService) {
+        this._audioBufferListArray = [];
+    }
+
+    get sampling() {
+        return this.fftSize / 2;
+    }
 
 
     initAudioBufferArray(value: Uint8Array) {
@@ -37,9 +49,14 @@ export class RhythmService {
     initCubesPositionValue(params: CubesPosition) {
         this._cubesPosition = params;
     }
+    initVisualizerValue(params: CubesPosition) {
+        this._visualizerValue.samplingSpacing = params.samplingSpacing;
+    }
+
 
     changeCubes(params: CubesPosition) {
-        this.initCubesPositionValue(params)
+        this.initCubesPositionValue(params);
+        this.initVisualizerValue(params);
         this.disposeCubes();
         this.generateCubesAndInsertScene();
     }
@@ -91,14 +108,67 @@ export class RhythmService {
         const axesHelper = new THREE.AxesHelper(200);
         this.scene.add(axesHelper);
     }
-
+    count = 0;
     renderByFrame(controls: any, renderer: any, scene: any, camera: any) {
         if (this._audioBufferArray && this._analyser) {
             this._analyser.getByteFrequencyData(this._audioBufferArray);
-            console.log(this._audioBufferArray);
+            this.updateBufferListArray(this._audioBufferArray);
+            // this.formatBufferValue()
+            let a = this.formatBufferValue();
+            // console.log(a[0][512]);
+            // console.log(a[1][512]);
+            // console.log(a[2][512]);
+            // console.log('---------------');
+            this.count+=1;
+            if(this.count<500){
+            }
+
         }
         controls.update();
         renderer.render(scene, camera);
         requestAnimationFrame(this.renderByFrame.bind(this, controls, renderer, scene, camera));
     }
+
+    updateBufferListArray(arr: Uint8Array) {
+        this._audioBufferListArray.push(arr);
+        if (this._audioBufferListArray.length > 5) {
+            this._audioBufferListArray.shift();
+        }
+        // console.log(this._audioBufferListArray);
+    }
+    /**
+     * 
+     */
+    formatBufferValue() {
+        let compareMinBuffer: Uint8Array = new Uint8Array(this.sampling);
+        let compareMaxBuffer: Uint8Array = new Uint8Array(this.sampling);
+        let compareMedianSumArray: number[] = [];
+        for (let i = 0; i < this._audioBufferListArray.length; i++) {
+            const element = this._audioBufferListArray[i];
+            if (i == 0) {
+                compareMinBuffer = new Uint8Array(element);
+                compareMaxBuffer = new Uint8Array(element);
+                compareMedianSumArray = Array.from(element);
+            }
+            console.log(element);
+            if (i > 0) {
+                for (let j = 0; j < element.length; j++) {
+                    const buffer = element[j];
+                    if (buffer < compareMinBuffer[j]) {
+                        compareMinBuffer[j] = buffer;
+                    }
+                    if (buffer > compareMaxBuffer[j]) {
+                        compareMaxBuffer[j] = buffer;
+                    }
+                    compareMedianSumArray[j] += compareMedianSumArray[j]
+                }
+            }
+        }
+        let compareMedianBuffer: Uint8Array = new Uint8Array(this.sampling);
+        for (let i = 0; i < compareMedianSumArray.length; i++) {
+            compareMedianBuffer[i] = compareMedianSumArray[i] / 5;
+        }
+        return [compareMinBuffer, compareMaxBuffer, compareMedianBuffer]
+    }
+
 }

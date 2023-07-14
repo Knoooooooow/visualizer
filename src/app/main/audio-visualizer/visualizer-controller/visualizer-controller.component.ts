@@ -20,7 +20,7 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
             unit: [100],
             width: [3],
             spacing: [1],
-            level: [1],
+            samplingSpacing: [2],
             x: [10],
             y: [10],
             z: [10]
@@ -42,6 +42,7 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
     ngOnInit() {
         const formValue: CubesPosition = this.form.value;
         this.rhythmService.initCubesPositionValue(formValue);
+        this.rhythmService.initVisualizerValue(formValue);
     }
     ngOnDestroy() {
         this.onDestroy$.next(true);

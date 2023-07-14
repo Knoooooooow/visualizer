@@ -3,7 +3,7 @@ export interface CubesPosition {
     unit: number,
     width: number,
     spacing: number,
-    level: number,
+    samplingSpacing: number,
     x: number,
     y: number,
     z: number

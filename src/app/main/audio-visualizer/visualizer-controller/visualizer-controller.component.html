@@ -16,9 +16,9 @@
                 </mat-form-field>
             </div>
             <div class="form-group">
-                <mat-label>缓冲等级</mat-label>
-                <mat-slider class="slider" [discrete]="true" [step]="1" [min]="1" [max]="20">
-                    <input placeholder="" matSliderThumb formControlName="level">
+                <mat-label>取样间隔</mat-label>
+                <mat-slider class="slider" [discrete]="true" [step]="1" [min]="2" [max]="10">
+                    <input placeholder="" matSliderThumb formControlName="samplingSpacing">
                 </mat-slider>
             </div>
             <div class="form-group">
