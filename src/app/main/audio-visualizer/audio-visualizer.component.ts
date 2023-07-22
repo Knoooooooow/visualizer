@@ -18,12 +18,12 @@ export class AudioVisualizerComponent implements OnInit, OnDestroy {
 
     navBarHeight: number;
 
-    isOpenedController:boolean;
+    isOpenedController: boolean;
 
     constructor(public cubeFactoryService: CubeFactoryService,
         public subjectService: SubjectService,
-        public rhythmService:RhythmService
-        ) { }
+        public rhythmService: RhythmService
+    ) { }
 
     ngOnInit() {
         this.isOpenedController = true;

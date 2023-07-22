@@ -3,6 +3,7 @@ import { CubeFactoryService } from './cube-factory.service';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CubesPosition } from 'src/app/model/cubesPosition.interface';
+import { Subject, interval, take, throttle } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +11,11 @@ import { CubesPosition } from 'src/app/model/cubesPosition.interface';
 export class RhythmService {
 
 
-    public fftSize = 2048;
+    public fftSize = 512;
+
+    private get sampling() {
+        return this.fftSize / 2;
+    }
 
     private _audioBufferArray: Uint8Array;
     private _audioBufferListArray: Uint8Array[];
@@ -23,6 +28,9 @@ export class RhythmService {
     private _cubesPosition: CubesPosition;
     private _visualizerValue: any = {};
 
+    private _audioBufferSubject$: Subject<any>;
+
+
     scene: THREE.Scene;
     camera: THREE.OrthographicCamera;
     renderer: THREE.WebGLRenderer;
@@ -31,10 +39,12 @@ export class RhythmService {
 
     constructor(public cubeFactoryService: CubeFactoryService) {
         this._audioBufferListArray = [];
-    }
-
-    get sampling() {
-        return this.fftSize / 2;
+        this._audioBufferSubject$ = new Subject();
+        this._audioBufferSubject$.pipe(throttle(_ => interval(1000)),take(20)).subscribe(data => {
+            this._analyser.getByteFrequencyData(this._audioBufferArray);
+            this.updateBufferListArray(this._audioBufferArray);
+            console.log(this.formatBufferValue())
+        })
     }
 
 
@@ -108,21 +118,9 @@ export class RhythmService {
         const axesHelper = new THREE.AxesHelper(200);
         this.scene.add(axesHelper);
     }
-    count = 0;
     renderByFrame(controls: any, renderer: any, scene: any, camera: any) {
         if (this._audioBufferArray && this._analyser) {
-            this._analyser.getByteFrequencyData(this._audioBufferArray);
-            this.updateBufferListArray(this._audioBufferArray);
-            // this.formatBufferValue()
-            let a = this.formatBufferValue();
-            // console.log(a[0][512]);
-            // console.log(a[1][512]);
-            // console.log(a[2][512]);
-            // console.log('---------------');
-            this.count+=1;
-            if(this.count<500){
-            }
-
+            this._audioBufferSubject$.next(1);
         }
         controls.update();
         renderer.render(scene, camera);
@@ -130,11 +128,10 @@ export class RhythmService {
     }
 
     updateBufferListArray(arr: Uint8Array) {
-        this._audioBufferListArray.push(arr);
+        this._audioBufferListArray.push(new Uint8Array(arr));
         if (this._audioBufferListArray.length > 5) {
             this._audioBufferListArray.shift();
         }
-        // console.log(this._audioBufferListArray);
     }
     /**
      * 
@@ -142,15 +139,12 @@ export class RhythmService {
     formatBufferValue() {
         let compareMinBuffer: Uint8Array = new Uint8Array(this.sampling);
         let compareMaxBuffer: Uint8Array = new Uint8Array(this.sampling);
-        let compareMedianSumArray: number[] = [];
         for (let i = 0; i < this._audioBufferListArray.length; i++) {
             const element = this._audioBufferListArray[i];
-            if (i == 0) {
+            if (i === 0) {
                 compareMinBuffer = new Uint8Array(element);
                 compareMaxBuffer = new Uint8Array(element);
-                compareMedianSumArray = Array.from(element);
             }
-            console.log(element);
             if (i > 0) {
                 for (let j = 0; j < element.length; j++) {
                     const buffer = element[j];
@@ -160,15 +154,10 @@ export class RhythmService {
                     if (buffer > compareMaxBuffer[j]) {
                         compareMaxBuffer[j] = buffer;
                     }
-                    compareMedianSumArray[j] += compareMedianSumArray[j]
                 }
             }
         }
-        let compareMedianBuffer: Uint8Array = new Uint8Array(this.sampling);
-        for (let i = 0; i < compareMedianSumArray.length; i++) {
-            compareMedianBuffer[i] = compareMedianSumArray[i] / 5;
-        }
-        return [compareMinBuffer, compareMaxBuffer, compareMedianBuffer]
+        return [compareMinBuffer, compareMaxBuffer]
     }
 
 }

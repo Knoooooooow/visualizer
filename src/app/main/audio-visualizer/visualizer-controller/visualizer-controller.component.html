@@ -16,8 +16,8 @@
                 </mat-form-field>
             </div>
             <div class="form-group">
-                <mat-label>取样间隔</mat-label>
-                <mat-slider class="slider" [discrete]="true" [step]="1" [min]="2" [max]="10">
+                <mat-label>取样间隔(毫秒)</mat-label>
+                <mat-slider class="slider" [discrete]="true" [step]="1" [min]="0" [max]="200">
                     <input placeholder="" matSliderThumb formControlName="samplingSpacing">
                 </mat-slider>
             </div>
