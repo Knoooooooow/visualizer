@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CubeFactoryService } from './cube-factory.service';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { CubesPosition } from 'src/app/model/cubesPosition.interface';
+import { CubesInfo } from 'src/app/model/cubesInfo.interface';
 import { Subject, interval, take, throttle } from 'rxjs';
 
 @Injectable({
@@ -25,7 +25,7 @@ export class RhythmService {
 
     private _cubes: THREE.Mesh[];
 
-    private _cubesPosition: CubesPosition;
+    private _cubesInfo: CubesInfo;
     private _visualizerValue: any = {};
 
     private _audioBufferSubject$: Subject<any>;
@@ -40,11 +40,20 @@ export class RhythmService {
     constructor(public cubeFactoryService: CubeFactoryService) {
         this._audioBufferListArray = [];
         this._audioBufferSubject$ = new Subject();
-        this._audioBufferSubject$.pipe(throttle(_ => interval(1000)),take(20)).subscribe(data => {
+        this._audioBufferSubject$.pipe(throttle(_ => interval(1000)), take(20)).subscribe(data => {
             this._analyser.getByteFrequencyData(this._audioBufferArray);
             this.updateBufferListArray(this._audioBufferArray);
-            console.log(this.formatBufferValue())
+            let bufferArray = this.formatBufferValue();
+            // console.log(bufferArray)
+            this.formatBufferToBarLength(bufferArray)
         })
+    }
+
+    formatBufferToBarLength(bufferArray:Uint8Array[]){
+        let bufferLength = bufferArray[0].length;
+        let barLength = this._cubesInfo.unit
+        let step = Math.floor(bufferLength/barLength)
+        console.log(bufferLength,barLength,step)
     }
 
 
@@ -56,15 +65,15 @@ export class RhythmService {
         this._analyser = value;
     }
 
-    initCubesPositionValue(params: CubesPosition) {
-        this._cubesPosition = params;
+    initCubesPositionValue(params: CubesInfo) {
+        this._cubesInfo = params;
     }
-    initVisualizerValue(params: CubesPosition) {
+    initVisualizerValue(params: CubesInfo) {
         this._visualizerValue.samplingSpacing = params.samplingSpacing;
     }
 
 
-    changeCubes(params: CubesPosition) {
+    changeCubes(params: CubesInfo) {
         this.initCubesPositionValue(params);
         this.initVisualizerValue(params);
         this.disposeCubes();
@@ -82,6 +91,7 @@ export class RhythmService {
 
         this.camera.position.set(0, 0, 800);
         this.scene.add(this.camera);
+        
         window.addEventListener("resize", () => {
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight - navBarHeight);
@@ -109,7 +119,7 @@ export class RhythmService {
     }
 
     generateCubesAndInsertScene() {
-        const { width, unit, spacing, x, y, z } = this._cubesPosition;
+        const { width, unit, spacing, x, y, z } = this._cubesInfo;
         this._cubes = this.cubeFactoryService.generateBoxGeometry({ width, height: 5, depth: 1 }, { color: 0x00ff00 }, { spacing, unit, startPosition: { x, y, z } });
         this.scene.add(...this._cubes);
 
@@ -139,11 +149,13 @@ export class RhythmService {
     formatBufferValue() {
         let compareMinBuffer: Uint8Array = new Uint8Array(this.sampling);
         let compareMaxBuffer: Uint8Array = new Uint8Array(this.sampling);
+        let compareMedianSumArray: number[] = [];
         for (let i = 0; i < this._audioBufferListArray.length; i++) {
             const element = this._audioBufferListArray[i];
             if (i === 0) {
                 compareMinBuffer = new Uint8Array(element);
                 compareMaxBuffer = new Uint8Array(element);
+                compareMedianSumArray = Array.from(element);
             }
             if (i > 0) {
                 for (let j = 0; j < element.length; j++) {
@@ -154,10 +166,15 @@ export class RhythmService {
                     if (buffer > compareMaxBuffer[j]) {
                         compareMaxBuffer[j] = buffer;
                     }
+                    compareMedianSumArray[j] += buffer
                 }
             }
         }
-        return [compareMinBuffer, compareMaxBuffer]
+        let compareMedianBuffer: Uint8Array = new Uint8Array(this.sampling);
+        for (let i = 0; i < compareMedianSumArray.length; i++) {
+            compareMedianBuffer[i] = compareMedianSumArray[i] / 5;
+        }
+        return [compareMinBuffer, compareMaxBuffer, compareMedianBuffer]
     }
 
 }

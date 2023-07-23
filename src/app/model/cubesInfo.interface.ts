@@ -1,4 +1,4 @@
-export interface CubesPosition {
+export interface CubesInfo {
     [key: string]: number,
     unit: number,
     width: number,

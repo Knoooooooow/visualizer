@@ -3,7 +3,7 @@ import { takeUntil } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RhythmService } from '../../service/rhythm.service';
-import { CubesPosition } from 'src/app/model/cubesPosition.interface';
+import { CubesInfo } from 'src/app/model/cubesInfo.interface';
 
 @Component({
     selector: 'app-visualizer-controller',
@@ -25,7 +25,7 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
             y: [10],
             z: [10]
         });
-        this.form.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe((params: CubesPosition) => {
+        this.form.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe((params: CubesInfo) => {
             for (const key in params) {
                 if (typeof params[key] === 'string') {
                     params[key] = Number(params[key]);
@@ -40,7 +40,7 @@ export class VisualizerControllerComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        const formValue: CubesPosition = this.form.value;
+        const formValue: CubesInfo = this.form.value;
         this.rhythmService.initCubesPositionValue(formValue);
         this.rhythmService.initVisualizerValue(formValue);
     }
